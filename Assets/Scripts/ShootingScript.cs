@@ -6,7 +6,9 @@ public class ShootingScript : NetworkBehaviour
 	public ParticleSystem _muzzleFlash;
 	public AudioSource _gunAudio;
 	public GameObject _impactPrefab;
+	public GameObject _bulletPrefab;
 	public Transform cameraTransform;
+	public Transform bulletSpawn;
 
 	ParticleSystem _impactEffect;
 
@@ -19,8 +21,10 @@ public class ShootingScript : NetworkBehaviour
 	void Update ()
 	{
 		if (Input.GetButtonDown ("Fire1")) {
+			
 			_muzzleFlash.Stop ();
 			_muzzleFlash.Play ();
+			CmdFire ();
 			_gunAudio.Stop ();
 			_gunAudio.Play ();
 
@@ -37,6 +41,23 @@ public class ShootingScript : NetworkBehaviour
 				}
 			}
 		}
+	}
+
+	[Command]
+	void CmdFire ()
+	{
+		// Create the Bullet from the Bullet Prefab
+		var bullet = (GameObject)Instantiate (
+			             _bulletPrefab,
+			             bulletSpawn.position,
+			             bulletSpawn.rotation);
+		NetworkServer.Spawn (bullet);
+
+		// Add velocity to the bullet
+		bullet.GetComponent<Rigidbody> ().velocity = bullet.transform.forward * 600;
+
+		// Destroy the bullet after 2 seconds
+		Destroy (bullet, 1.0f);
 	}
 
 	[Command]
