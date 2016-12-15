@@ -3,12 +3,15 @@ using UnityEngine.Networking;
 
 public class ShootingScript : NetworkBehaviour
 {
+	[SerializeField] private TextMesh kills;
 	public ParticleSystem _muzzleFlash;
 	public AudioSource _gunAudio;
 	public GameObject _impactPrefab;
 	public GameObject _bulletPrefab;
 	public Transform cameraTransform;
 	public Transform bulletSpawn;
+
+	private int _kills = 0;
 
 	ParticleSystem _impactEffect;
 
@@ -38,6 +41,8 @@ public class ShootingScript : NetworkBehaviour
 
 				if (hit.transform.tag == "Player") {
 					CmdHitPlayer (hit.transform.gameObject);
+					_kills++;
+					kills.text = "Kills: " + _kills;
 				}
 			}
 		}
